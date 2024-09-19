@@ -1,0 +1,76 @@
+;
+; Driver.inf
+;
+
+[Version]
+Signature="$WINDOWS NT$"
+Class=System
+ClassGuid={4d36e97d-e325-11ce-bfc1-08002be10318}
+Provider=%ManufacturerName%
+DriverVer=
+CatalogFile=Driver.cat
+PnpLockDown=1
+
+[DestinationDirs]
+DefaultDestDir          = 12
+MiniFilter.DriverFiles  = 12     
+
+[DefaultInstall]
+OptionDesc          = %ServiceDescription%
+CopyFiles           = MiniFilter.DriverFiles
+
+[DefaultInstall.Services]
+AddService          = %ServiceName%,,MiniFilter.Service
+
+[DefaultUninstall]
+DelFiles   = MiniFilter.DriverFiles
+
+[DefaultUninstall.Services]
+DelService = %ServiceName%,0x200    
+
+[MiniFilter.Service]
+DisplayName      = %ServiceName%
+Description      = %ServiceDescription%
+ServiceBinary    = %12%\%DriverName%.sys        ;%windir%\system32\drivers\
+Dependencies     = "FltMgr"
+ServiceType      = 2                            ;SERVICE_FILE_SYSTEM_DRIVER
+StartType        = 3                            ;SERVICE_DEMAND_START = 3 / SERVICE_AUTO_START = 2
+ErrorControl     = 1                            ;SERVICE_ERROR_NORMAL
+
+LoadOrderGroup = "FSFilter Activity Monitor"
+AddReg           = MiniFilter.AddRegistry
+
+[MiniFilter.AddRegistry]
+HKR,,"DebugFlags",0x00010001 ,0x0
+HKR,,"SupportedFeatures",0x00010001,0x3
+HKR,"Instances","DefaultInstance",0x00000000,%DefaultInstance%
+HKR,"Instances\"%DefaultInstance%,"Altitude",0x00000000,%Instance1.Altitude%
+HKR,"Instances\"%DefaultInstance%,"Flags",0x00010001,%Instance1.Flags%
+
+HKR,,"FilePath",0x00000000,%FilePath%
+HKR,,"ProcPath",0x00000000,%ProcPath%
+HKR,,"TraceLog",0x00000000,%TraceLog%
+
+[MiniFilter.DriverFiles]
+%DriverName%.sys
+
+[SourceDisksFiles]
+Driver.sys = 1,,
+
+[SourceDisksNames]
+1 = %DiskName%,,,""
+
+[Strings]
+ManufacturerName = "TestWork"
+ServiceDescription = "TestWork"
+ServiceName	= "DriverTest"
+DriverName = "Driver"
+DiskName = "Driver Source Disk"
+
+DefaultInstance         = "Driver Instance"
+Instance1.Altitude       = "4000000"
+Instance1.Flags         = 0x0       
+
+FilePath         = "C:\Windows\Branding\Basebrd\basebrd.dll"
+ProcPath         = "C:\Windows\explorer.exe"
+TraceLog         = "C:\Users\admin\Desktop\log.txt"
